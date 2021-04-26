@@ -1,6 +1,7 @@
 # Python 3 server example
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
+import json
 
 hostName = "localhost"
 serverPort = 8080
@@ -11,18 +12,21 @@ class Test(object):
         self.count = 0
 
     def oneMore(self):
-        time.sleep(5)
+        time.sleep(1)
         self.count += 1
         return self.count
 
 class MyServer(BaseHTTPRequestHandler):
 
-    def do_GET(self):
+    def do_POST(self):
         # print()
         self.send_response(200)
         self.send_header("Content-type", "text")
         self.end_headers()
-        self.wfile.write(bytes("mano jkkkkkk" + str(test.oneMore()), "utf-8"))
+        data = json.loads(self.rfile.read(int(self.headers['Content-Length'])))
+        print(len(data['vector']))
+        # self.wfile.write(bytes("mano jkkkkkk" + str(test.oneMore()), "utf-8"))
+        self.wfile.write(bytes("mano jkkkkkk", "utf-8"))
 
 if __name__ == "__main__":     
     test = Test(0)   
