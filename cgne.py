@@ -43,4 +43,4 @@ print('shape vector: ' + str(vector.shape))
 
 # sub = vector - dot
 
-print(vector - matrix)
+print(vector - (matrix * first))

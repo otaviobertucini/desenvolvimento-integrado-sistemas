@@ -4,7 +4,7 @@ import time
 import json
 
 hostName = "localhost"
-serverPort = 8080
+serverPort = 8001
 
 class Test(object):
 
