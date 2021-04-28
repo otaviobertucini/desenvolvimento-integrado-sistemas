@@ -4,15 +4,6 @@ import numpy as np
 
 path = pathlib.Path(__file__).parent.absolute()
 
-# dirty_lines = open(str(path) + '/data/real/g-1.txt', "r").read().split('\n')
-# dirty_lines.pop()
-# clean_lines = []
-# for line in dirty_lines:
-#     aux = line.replace(',', '')
-#     clean_lines.append(float(aux))
-# vector_lines = np.array(clean_lines)
-# # vector = vector_lines.reshape(len(vector_lines), 1)
-# vector = vector_lines.reshape(len(vector_lines), 1)
 imported_vector = pd.read_csv(str(path) + '/data/real/g-1.txt', sep='.', header=None).to_numpy()
 vector = []
 for e in imported_vector:
@@ -21,26 +12,33 @@ for e in imported_vector:
 vector = np.matrix(vector)
 
 
-first = np.zeros((3600, 1))
-print(first.shape)
+image = np.zeros((3600, 1))
 
-matrix_lines = pd.read_csv(str(path) + '/data/real/H-1.txt', sep=',', lineterminator='\n', header=None  )
+print('matrix imported started')
+matrix_lines = pd.read_csv(str(path) + '/data/real/H-1.txt', sep=',', lineterminator='\n', header=None)
+print('matrix imported as df')
 matrix = np.matrix(matrix_lines.to_numpy())
+print('natrix converted: ' + str(matrix.dtype))
 
-# print(vector_lines.dot(first))
-# print('shape: ' + str(matrix.shape))
+r = vector - (matrix * image)
+p = matrix.T * r
 
-# dot = np.nan_to_num(matrix.dot(first))
-# dot = dot.reshape(dot.shape)    
-# print('shape dot after: ' + str(dot.shape))
-# dot = dot.reshape(dot.shape[0])
+count = 0
+while count < 5:
 
-# sub = np.squeeze(np.asarray(np.nan_to_num(matrix.dot(first))))
-# sub = np.array(sub[0])
-# print('shape dot: ' + str(dot.shape))
-print('shape matrix: ' + str(matrix.shape))
-print('shape vector: ' + str(vector.shape))
+    print('i = ' + str(count))
 
-# sub = vector - dot
+    alpha = ((r.T * r) / (p.T * p))[0][0]
 
-print(vector - (matrix * first))
+    print('alpha: ' + str(alpha[0][0]))
+
+    next_image = image + (alpha * p)
+    next_r = r - (alpha * (H * p))
+
+    beta = ((next_r.T * next_r) / (r.T * r))[0][0]
+
+    p = matrix.T * next_r + beta * p
+    image = next_image
+    r = next_r 
+
+    count += 1
