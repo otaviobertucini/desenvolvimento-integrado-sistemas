@@ -15,7 +15,7 @@ class CGNE(object):
 
     def generate_image(self, name):
 
-        path = pathlib.Path(__file__).parent.absolute()
+        path = str(pathlib.Path(__file__).parent.absolute()) + '/..'
 
         imported_vector = pd.read_csv(str(path) + '/data/real/g-3.txt', sep='.', header=None).to_numpy()
         vector = []
@@ -70,6 +70,7 @@ class MyServer(BaseHTTPRequestHandler):
 
     def do_POST(self):
         print('i delete all my girls numbers on the phone for u')
+        # return None
         data = json.loads(self.rfile.read(int(self.headers['Content-Length'])))
 
         cgne.generate_image(data['name'])
@@ -77,7 +78,7 @@ class MyServer(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-type", "text")
         self.end_headers()
-        self.wfile.write(bytes("mano jkkkkkk", "utf-8"))
+        self.wfile.write(bytes("i delete all my girls numbers on the phone for u", "utf-8"))
 
 if __name__ == "__main__":
     cgne = CGNE()

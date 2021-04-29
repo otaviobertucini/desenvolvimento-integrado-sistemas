@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGNE processor</title>
+
+    <script>
+
+        function action() {
+            alert('olaaaa');
+        }
+
+        function cgne() {
+            console.log('CGNE iniciado.');
+
+            request = new XMLHttpRequest();
+
+            request.open('POST', 'http://localhost:8001');
+            request.setRequestHeader('Content-Length', 'application/json');
+
+            request.onload = action
+
+            request.send(JSON.stringify({ name: 'oie_vem_browser' }))
+        }
+
+    </script>
+</head>
+
+<body>
+
+    Olá aqui você pode chamar o CGNE. Escolha o seu vetor de imagem:
+
+    <input type="file" />
+
+    <br>
+
+    My action button: <button onclick="action()"> ACTION! </button>
+
+    <br>
+
+    Clique aqui para chamar o CGNE: <button onclick="cgne()"> ACTION! </button>
+
+</body>
+
+</html>
