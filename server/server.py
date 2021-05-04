@@ -13,15 +13,15 @@ serverPort = 8001
 
 class CGNE(object):
 
-    def generate_image(self, name):
+    def generate_image(self, name, vector):
 
         path = str(pathlib.Path(__file__).parent.absolute()) + '/..'
 
-        imported_vector = pd.read_csv(str(path) + '/data/real/g-3.txt', sep='.', header=None).to_numpy()
-        vector = []
-        for e in imported_vector:
-            aux = e[0].replace(',', '')
-            vector.append([float(aux)])
+        # imported_vector = pd.read_csv(str(path) + '/data/real/g-3.txt', sep='.', header=None).to_numpy()
+        # vector = []
+        # for e in imported_vector:
+        #     aux = e[0].replace(',', '')
+        #     vector.append([float(aux)])
         vector = np.matrix(vector)
 
 
@@ -73,7 +73,7 @@ class MyServer(BaseHTTPRequestHandler):
         # return None
         data = json.loads(self.rfile.read(int(self.headers['Content-Length'])))
 
-        cgne.generate_image(data['name'])
+        cgne.generate_image(data['name'], data['vector'])
 
         self.send_response(200)
         self.send_header("Content-type", "text")

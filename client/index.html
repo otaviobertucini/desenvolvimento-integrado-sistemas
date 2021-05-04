@@ -1,47 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CGNE processor</title>
 
     <script>
+      function action() {
+        alert("FINISHED!");
+      }
 
-        function action() {
-            alert('olaaaa');
-        }
+      function cgneRequest(vector) {
+        console.log(vector);
 
-        function cgne() {
-            console.log('CGNE iniciado.');
+        request = new XMLHttpRequest();
 
-            request = new XMLHttpRequest();
+        request.open("POST", "http://localhost:8001");
+        request.setRequestHeader("Content-Length", "application/json");
 
-            request.open('POST', 'http://localhost:8001');
-            request.setRequestHeader('Content-Length', 'application/json');
+        request.onload = action;
 
-            request.onload = action
+        request.send(JSON.stringify({ name: "oie_vem_browser", vector }));
+      }
 
-            request.send(JSON.stringify({ name: 'oie_vem_browser' }))
-        }
+      function cgne() {
+        console.log("CGNE iniciado.");
 
+        const input = document.getElementById("fileinput");
+        var fReader = new FileReader();
+        fReader.readAsText(input.files[0]);
+        fReader.onloadend = function (event) {
+          const data = event.target.result;
+          const vector = data.split("\n");
+
+          let count = 1;
+          const gained_vector = vector.map((signal) => {
+            if (count > 794) {
+              count = 1;
+            }
+
+            const number = Number(signal.replace(",", ""));
+
+            const gamma = 100 + (1 / 20) * count * Math.sqrt(count);
+            count++;
+
+            return [gamma * number];
+          });
+
+          cgneRequest(gained_vector.slice(0, 50816));
+        };
+      }
     </script>
-</head>
+  </head>
 
-<body>
+  <body>
+    Olá aqui você pode chamar o CGNE.
 
-    Olá aqui você pode chamar o CGNE. Escolha o seu vetor de imagem:
+    <br />
 
-    <input type="file" />
+    My action button: <button onclick="action()">ACTION!</button>
 
-    <br>
+    <br />
 
-    My action button: <button onclick="action()"> ACTION! </button>
+    Selecione o arquivo de sinal: <input type="file" id="fileinput" />
 
-    <br>
+    <br />
 
-    Clique aqui para chamar o CGNE: <button onclick="cgne()"> ACTION! </button>
-
-</body>
-
+    Clique aqui para chamar o CGNE: <button onclick="cgne()">CGNE</button>
+  </body>
 </html>
