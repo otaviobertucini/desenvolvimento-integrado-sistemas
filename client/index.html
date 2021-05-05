@@ -20,7 +20,9 @@
 
         request.onload = action;
 
-        request.send(JSON.stringify({ name: "oie_vem_browser", vector }));
+        const name = document.getElementById("filename").value;
+
+        request.send(JSON.stringify({ name, vector }));
       }
 
       function cgne() {
@@ -50,6 +52,17 @@
           cgneRequest(gained_vector.slice(0, 50816));
         };
       }
+
+      function getImages() {
+        const request = new XMLHttpRequest();
+
+        request.open("GET", "http://localhost:8001");
+        request.setRequestHeader("Content-Length", "application/json");
+
+        request.onload = action;
+
+        request.send();
+      }
     </script>
   </head>
 
@@ -58,14 +71,23 @@
 
     <br />
 
-    My action button: <button onclick="action()">ACTION!</button>
-
-    <br />
-
     Selecione o arquivo de sinal: <input type="file" id="fileinput" />
 
     <br />
 
+    Digite o nome do arquivo de saída: <input type="text" id="filename" />
+
+    <br />
+
     Clique aqui para chamar o CGNE: <button onclick="cgne()">CGNE</button>
+
+    <br />
+
+    Clique aqui para buscar as imagens criadas:
+    <button onclick="getImages()">Atualizar</button>
+
+    <br />
+
+    <div id="imagesdiv"></div>
   </body>
 </html>

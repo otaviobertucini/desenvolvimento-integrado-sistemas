@@ -62,11 +62,18 @@ class CGNE(object):
             count += 1
 
         image = image.reshape(60, 60)
+        image = np.flipud(np.rot90(image))
+
+        image_path = str(pathlib.Path(__file__).parent.absolute()) + '/../images/'
 
         image = (image - np.min(image))/np.ptp(image)
-        png = plt.imsave(str(name) + '.png', image, cmap='gray')
+        png = plt.imsave(image_path + str(name) + '.png', image, cmap='gray')
 
 class MyServer(BaseHTTPRequestHandler):
+
+    def do_GET(self):
+
+        print('hello rsrs')
 
     def do_POST(self):
         print('i delete all my girls numbers on the phone for u')
