@@ -7,21 +7,20 @@ import pathlib
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as col
+import os
+from datetime import datetime
 
 hostName = "localhost"
 serverPort = 8001
 
 class CGNE(object):
 
-    def generate_image(self, name, vector):
+    def generate_image(self, name, vector, username):
+
+        start = datetime.now()
 
         path = str(pathlib.Path(__file__).parent.absolute()) + '/..'
 
-        # imported_vector = pd.read_csv(str(path) + '/data/real/g-3.txt', sep='.', header=None).to_numpy()
-        # vector = []
-        # for e in imported_vector:
-        #     aux = e[0].replace(',', '')
-        #     vector.append([float(aux)])
         vector = np.matrix(vector)
 
 
@@ -64,10 +63,19 @@ class CGNE(object):
         image = image.reshape(60, 60)
         image = np.flipud(np.rot90(image))
 
-        image_path = str(pathlib.Path(__file__).parent.absolute()) + '/../images/'
+        image_path = str(pathlib.Path(__file__).parent.absolute()) + '/../images/' + str(name) + '.png'
 
         image = (image - np.min(image))/np.ptp(image)
-        png = plt.imsave(image_path + str(name) + '.png', image, cmap='gray')
+        png = plt.imsave(image_path, image, cmap='gray')
+
+        attributes = {
+            "username": username,
+            "algorithm": "CGNE",
+            "start": start,
+            "end": datetime.now(),
+        }
+
+        os.setxattr(image_path, 'user.meta', bytes(json.dumps(attributes)))
 
 class MyServer(BaseHTTPRequestHandler):
 
@@ -76,13 +84,12 @@ class MyServer(BaseHTTPRequestHandler):
         print('hello rsrs')
 
     def do_POST(self):
-        print('i delete all my girls numbers on the phone for u')
-        # return None
         data = json.loads(self.rfile.read(int(self.headers['Content-Length'])))
 
         cgne.generate_image(data['name'], data['vector'])
 
         self.send_response(200)
+        print("testes")
         self.send_header("Content-type", "text")
         self.end_headers()
         self.wfile.write(bytes("i delete all my girls numbers on the phone for u", "utf-8"))

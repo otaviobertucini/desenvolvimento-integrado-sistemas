@@ -21,8 +21,9 @@
         request.onload = action;
 
         const name = document.getElementById("filename").value;
+        const username = document.getElementById("username").value;
 
-        request.send(JSON.stringify({ name, vector }));
+        request.send(JSON.stringify({ name, vector, username }));
       }
 
       function cgne() {
@@ -76,6 +77,10 @@
     <br />
 
     Digite o nome do arquivo de saída: <input type="text" id="filename" />
+
+    <br />
+
+    Digite o seu nome de usuário: <input type="text" id="username" /> 
 
     <br />
 
