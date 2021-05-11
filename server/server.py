@@ -15,7 +15,11 @@ serverPort = 8001
 
 class CGNE(object):
 
+    is_running = 0
+
     def generate_image(self, name, vector, username):
+
+        self.is_running = 1
 
         start = datetime.now()
 
@@ -71,28 +75,35 @@ class CGNE(object):
         attributes = {
             "username": username,
             "algorithm": "CGNE",
-            "start": start,
-            "end": datetime.now(),
+            "start": str(start),
+            "end": str(datetime.now()),
         }
 
         os.setxattr(image_path, 'user.meta', bytes(json.dumps(attributes)))
+
+        self.is_running = 0
+
+    def isRunning(self):
+
+        return self.is_running
 
 class MyServer(BaseHTTPRequestHandler):
 
     def do_GET(self):
 
         print('hello rsrs')
+        print('tá rodando?: ', cgne.isRunning())
 
     def do_POST(self):
         data = json.loads(self.rfile.read(int(self.headers['Content-Length'])))
 
-        cgne.generate_image(data['name'], data['vector'])
+        cgne.generate_image(data['name'], data['vector'], data['username'])
 
         self.send_response(200)
         print("testes")
         self.send_header("Content-type", "text")
         self.end_headers()
-        self.wfile.write(bytes("i delete all my girls numbers on the phone for u", "utf-8"))
+        self.wfile.write(bytes("returned", "utf-8"))
 
 if __name__ == "__main__":
     cgne = CGNE()
