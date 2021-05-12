@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as col
 import os
 from datetime import datetime
+from socketserver import ThreadingMixIn
+import threading
 
 hostName = "localhost"
 serverPort = 8001
@@ -88,6 +90,9 @@ class CGNE(object):
 
         return self.is_running
 
+class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
+    pass
+
 class MyServer(BaseHTTPRequestHandler):
 
     def do_OPTIONS(self):
@@ -126,20 +131,32 @@ class MyServer(BaseHTTPRequestHandler):
         self.wfile.write(bytes(str(json.dumps(result)), "ASCII"))
 
     def do_POST(self):
+
+        if(cgne.isRunning() == 1):
+            self.send_response(404)
+            self.send_header("Content-Type", "text")
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+            self.end_headers()
+            self.wfile.write(bytes("Aguarde para criar a proxima imagem!", "utf-8"))
+            return None
+
         data = json.loads(self.rfile.read(int(self.headers['Content-Length'])))
 
         cgne.generate_image(data['name'], data['vector'], data['username'])
-
         self.send_response(200)
         self.send_header("Content-Type", "text")
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
         self.end_headers()
-        self.wfile.write(bytes("returned", "utf-8"))
+        self.wfile.write(bytes("Imagem criada com sucesso!", "utf-8"))
+        return None
+
 
 if __name__ == "__main__":
     cgne = CGNE()
-    webServer = HTTPServer((hostName, serverPort), MyServer)
+    # webServer = HTTPServer((hostName, serverPort), MyServer)
+    webServer = ThreadedHTTPServer((hostName, serverPort), MyServer)
     print("Server started http://%s:%s" % (hostName, serverPort))
 
     try:
