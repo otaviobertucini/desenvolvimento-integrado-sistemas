@@ -16,13 +16,25 @@
         request.setRequestHeader("Content-Type", "application/json");
 
         function finished() {
+          setTimeout(1000);
           alert(request.response);
+          // console.log('req ', request);
         }
 
         request.onload = finished;
 
         const name = document.getElementById("filename").value;
         const username = document.getElementById("username").value;
+
+        if(!name){
+          alert("Selecione um nome para o arquivo!");
+          return;
+        }
+
+        if(!username){
+          alert("Selecione um nome de usuário!");
+          return;
+        }
 
         request.send(JSON.stringify({ name, vector, username }));
       }
@@ -31,6 +43,10 @@
         console.log("CGNE iniciado.");
 
         const input = document.getElementById("fileinput");
+        if(!input.files[0]){
+          alert("Selecione um arquivo!");
+          return;
+        }
         var fReader = new FileReader();
         fReader.readAsText(input.files[0]);
         fReader.onloadend = function (event) {
@@ -76,6 +92,8 @@
 
             const text = document.createElement("p");
             text.innerHTML = `
+              Arquivo: ${i.name}
+              <br />
               Usuário: ${i.attributes.username}
               <br />
               Data de inicio: ${i.attributes.start}
