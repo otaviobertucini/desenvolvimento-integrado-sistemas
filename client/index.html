@@ -6,7 +6,7 @@
     <title>CGNE processor</title>
 
     <script>
-      function action() {
+      function finished() {
         alert("FINISHED!");
       }
 
@@ -16,9 +16,9 @@
         request = new XMLHttpRequest();
 
         request.open("POST", "http://localhost:8001");
-        request.setRequestHeader("Content-Length", "application/json");
+        request.setRequestHeader("Content-Type", "application/json");
 
-        request.onload = action;
+        request.onload = finished;
 
         const name = document.getElementById("filename").value;
         const username = document.getElementById("username").value;
@@ -57,10 +57,45 @@
       function getImages() {
         const request = new XMLHttpRequest();
 
-        request.open("GET", "http://localhost:8001");
-        request.setRequestHeader("Content-Length", "application/json");
+        function handleImages() {
+          const data = JSON.parse(request.response);
 
-        request.onload = action;
+          const images_div = document.getElementById("imagesdiv");
+          images_div.innerHTML = '';
+
+          data.forEach((i) => {
+
+            const div = document.createElement("div");
+            div.style = "margin: 10px; display: inline-flex;"
+
+            const image = document.createElement("img");
+            image.src = i.path + i.name;
+            image.height = "160"
+            image.style = "margin: 10px;"
+
+            const text = document.createElement("p");
+            text.innerHTML = `
+              Usuário: ${i.attributes.username}
+              <br />
+              Data de inicio: ${i.attributes.start}
+              <br />
+              Data de fim: ${i.attributes.end}
+              <br />
+              Algoritmo: ${i.attributes.algorithm}
+              <br />
+              Tamanho: ${i.size}b
+            `;
+
+            div.appendChild(image);
+            div.appendChild(text);
+            images_div.appendChild(div);
+          });
+        }
+
+        request.open("GET", "http://localhost:8001");
+        request.setRequestHeader("Content-Type", "application/json");
+
+        request.onload = handleImages;
 
         request.send();
       }
@@ -80,7 +115,7 @@
 
     <br />
 
-    Digite o seu nome de usuário: <input type="text" id="username" /> 
+    Digite o seu nome de usuário: <input type="text" id="username" />
 
     <br />
 
